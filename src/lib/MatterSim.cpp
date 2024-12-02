@@ -59,7 +59,7 @@ Simulator::Simulator() :width(320),
                         maxElevation(0.94),
                         frames(0),
                         navGraphPath("./connectivity"),
-                        datasetPath("./data/v1/scans/"),
+                        datasetPath("./data/v1/scans/v1/scans"),
 #ifdef OSMESA_RENDERING
                         buffer(NULL),
 #endif
