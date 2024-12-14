@@ -24,17 +24,21 @@ RUN sh /cmake-3.12.2-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
 RUN ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
 RUN cmake --version
 # Clone the OpenCV and OpenCV Contrib repositories
-WORKDIR /opt
-RUN git clone https://github.com/opencv/opencv.git
-RUN git clone https://github.com/opencv/opencv_contrib.git 
+RUN apt-get update && apt-get install -y unzip qt5-default
+WORKDIR /opencv
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.1.0.zip \
+    && wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.1.0.zip \
+    && unzip opencv.zip \
+    && unzip opencv_contrib.zip \
+    && mv opencv-4.1.0 opencv \
+    && mv opencv_contrib-4.1.0 opencv_contrib
 # Build OpenCV with OpenGL support
-WORKDIR /opt/opencv/build
+WORKDIR /opencv/opencv/build
 RUN cmake -D CMAKE_BUILD_TYPE=Release \
       -D CMAKE_INSTALL_PREFIX=/usr/local \
-      -D OPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib/modules \
+      -D OPENCV_EXTRA_MODULES_PATH=/opencv/opencv_contrib/modules \
       -D WITH_OPENGL=ON \
-      -D WITH_GTK=ON \
-      -D WITH_GTK_2_X=OFF \
+      -D WITH_QT=ON \
       -D BUILD_EXAMPLES=OFF \
       -D BUILD_opencv_python3=ON \
       -D PYTHON3_EXECUTABLE=$(which python3) \
@@ -44,4 +48,4 @@ RUN cmake -D CMAKE_BUILD_TYPE=Release \
 RUN make -j$(nproc) && make install && ldconfig
 
 ENV PYTHONPATH=/root/mount/Matterport3DSimulator/build:/usr/local/lib/python3.6/site-packages/cv2/python-3.6
-
+WORKDIR /
