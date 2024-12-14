@@ -452,12 +452,9 @@ void Simulator::renderScene() {
     loadTimer.Start();
     auto& navGraph = NavGraph::getInstance(navGraphPath, datasetPath, preloadImages, renderDepth, randomSeed, cacheSize);
     loadTimer.Stop();
-    std::cout << "Before for loop" <<std::endl;
     for (auto state : states) {
-        std::cout << "Before for loop" <<std::endl;
         renderTimer.Start();
         std::pair<GLuint, GLuint> texIds = navGraph.cubemapTextures(state->scanId, state->location->ix);
-        std::cout << "Before for loop" <<std::endl;
         glClear(GL_COLOR_BUFFER_BIT);
         // Scale and move the cubemap model into position
         Model = navGraph.cameraRotation(state->scanId,state->location->ix) * Scale;
@@ -469,7 +466,6 @@ void Simulator::renderScene() {
         glUniformMatrix4fv(ModelViewMat, 1, GL_FALSE, glm::value_ptr(M));
         glUniform1i(isDepth, false);
         glViewport(0, 0, width, height);
-        std::cout << "Before for loop" <<std::endl;
         glBindTexture(GL_TEXTURE_CUBE_MAP, texIds.first);
         GLenum texError = glGetError();
         if (texError != GL_NO_ERROR) {
@@ -483,9 +479,7 @@ void Simulator::renderScene() {
         glPixelStorei(GL_PACK_ALIGNMENT, (img.step & 3) ? 1 : 4);
         //set length of one complete row in destination data (doesn't need to equal img.cols)
         glPixelStorei(GL_PACK_ROW_LENGTH, img.step/img.elemSize());
-        std::cout << "Before for loop" <<std::endl;
         glReadPixels(0, 0, img.cols, img.rows, GL_BGR, GL_UNSIGNED_BYTE, img.data);
-        std::cout << "Before for loop" <<std::endl;
         gpuReadTimer.Stop();
         assertOpenGLError("render RGB");
         if (renderDepth) {
